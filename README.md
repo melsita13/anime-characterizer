@@ -27,7 +27,11 @@
 # run streamlit
     streamlit run app.py
 
-# phase 2
+# 🔧 Phase 2️⃣ Revised: Using DeepDanbooru ONNX Model
+    Install the ONNX wrapper for DeepDanbooru:
+    ** pip install deepdanbooru-onnx
+
+# 🔧 Phase 2: Upgrade to DeepDanbooru (TensorFlow Version)
     1. clone pretrained model
     git clone https://github.com/KichangKim/DeepDanbooru.git
     cd DeepDanbooru
@@ -36,3 +40,4 @@
     pip install -r requirements.txt
     pip install -e .
 
+# 🔧 Phase 3:

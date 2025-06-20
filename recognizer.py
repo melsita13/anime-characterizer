@@ -1,25 +1,32 @@
 import deepdanbooru as dd
 from PIL import Image
 import numpy as np
-import os
 
 Model_Path = "./models/deepdanbooru_model"
 
-def recognize_character(image: Image.Image) -> str:
-    # Convert image to model input format
+
+def preprocess_image(image: Image.Image, size: int = 512) -> np.array:
     image = image.convert("RGB")
     width, height = image.size
-    target_size = 512
-    ratio = target_size / max(width, height)
+    ratio = size / max(width, height)
     new_size = (int(width * ratio), int(height * ratio))
     image = image.resize(new_size)
-    background = Image.new("RGB", (target_size, target_size), (255, 255, 255))
-    background.paste(
-        image, ((target_size - new_size[0]) // 2, (target_size - new_size[1]) // 2)
-    )
+    background = Image.new("RGB", (size, size), (255, 255, 255))
+    background.paste(image, ((size - new_size[0]) // 2, (size - new_size[1]) // 2))
     image_array = np.array(background) / 255.0
-    image_array = image_array.reshape((1, target_size, target_size, 3))
+    return image_array.reshape((1, size, size, 3))
 
+
+def recognize_character(image: Image.Image) -> str:
+    """Recognizes the character in the given image.
+
+    Args:
+        image (Image.Image): The image to recognize the character from.
+
+    Returns:
+        str: The name of the recognized character or "Unknown Character".
+    """
+    image_array = preprocess_image(image)
     # Load model and tags
     try:
         model = dd.project.load_model_from_project(Model_Path, compile_model=False)
@@ -33,15 +40,29 @@ def recognize_character(image: Image.Image) -> str:
     predictions = model.predict(image_array)[0]
 
     tag_confidence = {tag: predictions[i] for i, tag in enumerate(tags)}
+    #  step1: Try to extract character tags
     characters = {
-        tag: prob
-        for tag, prob in tag_confidence.items()
-        if tag.startswith("character:") and prob > 0.3
+        tag: conf
+        for tag, conf in tag_confidence.items()
+        if tag.startswith("character:") and conf > 0.3
     }
 
     if characters:
-        top_tag = sorted(characters.items(), key=lambda x: x[1], reverse=True)[0][0]
-        name = top_tag.split("character:")[1]
-        return name.replace("_", " ").title()
-    else:
-        return "Unknown Character"
+        best_match = sorted(characters.items(), key=lambda item: item[1], reverse=True)[
+            0
+        ][0]
+        return best_match.split("character:")[1].replace("_", " ").title()
+
+    # step2: If no character tags, try to extract general tags
+    probable_names = {
+        tag: conf
+        for tag, conf in tag_confidence.items()
+        if "(" in tag and "_" in tag and conf > 0.5
+    }
+    if probable_names:
+        best_fallback = sorted(
+            probable_names.items(), key=lambda item: item[1], reverse=True
+        )[0][0]
+        return best_fallback.split("(")[0].replace("_", " ").title()
+
+    return "Unknown Character"
