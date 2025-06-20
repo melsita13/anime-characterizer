@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+.envrc
+
+# Model weights and large data files
+models/deepdanbooru_model/
+*.h5
+*.ckpt
+*.tflite
+*.onnx
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Test images or temp files
+test_images/
+*.jpg
+*.png
+
+# Mac/Linux system files
+.DS_Store
+
+# VSCode settings
+.vscode/
+
+# Streamlit cache
+.streamlit/
+
+# Logs and outputs
+*.log
+*.out
+*.txt

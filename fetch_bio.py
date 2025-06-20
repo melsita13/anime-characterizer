@@ -1,5 +1,2 @@
-streamlit
-opencv-python
-pillow
-requests
-numpy
+import deepdanbooru as dd
+print(dir(dd.project))
