@@ -67,4 +67,4 @@ def recognize_character(image: Image.Image) -> str:
 
     top_tags = sorted(tag_confidence.items(), key=lambda x: x[1], reverse=True)[:5]
     top_tags_clean = [tag.replace('_',' ').split(":")[-1].title() for tag, _ in top_tags]
-    return f"Unknown Character (Top Tags: {', '.join(top_tags_clean)})"
+    return f"Related Character (Top Tags: {', '.join(top_tags_clean)})"
