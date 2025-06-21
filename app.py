@@ -11,9 +11,11 @@ if uploaded_file is not None:
     st.image(image, caption="Uploaded Image")
 
     st.info("Processing the image...")
-    char_name = recognize_character(image)
+    character_name = recognize_character(image)
+    character_name = st.text_input("Detected Character:", value=character_name)
 
-    st.success(f"Identified Character: {char_name}")
+
+    st.success(f"Identified Character: {character_name}")
 
     st.subheader("Character Details")
     st.write("Here you can add details about the character, such as their background, abilities, and role in the anime.")
