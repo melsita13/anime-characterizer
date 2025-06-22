@@ -53,4 +53,8 @@
     pip install -r requirements.txt
     pip install -e .
 
-# 🔧 Phase 3:
+# 🌐 Phase 3 – Jikan API Integration (MyAnimeList)
+    Take the recognized character name (e.g., "Rem") → Query the Jikan API → Display:
+    ✅ Character Image
+    ✅ About/Bio
+    ✅ List of Anime appearances
