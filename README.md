@@ -1,6 +1,6 @@
 # 🎎 anime-characterizer
 
-    This project mainly focus on identifying anime characters, bio and behavior. Currently the model identifying some popular anime characters and for non popular its suggesting some tags that will identifys the character details. We are using pretrained DL model resnet from DeepDanbooru and showing the user interface using streamlit.
+    "This project mainly focus on identifying anime characters, bio and behavior. Currently the model identifying some popular anime characters and for non popular its suggesting some tags that will identifys the character details. We are using pretrained DL model resnet from DeepDanbooru and showing the user interface using streamlit."
 
 **⚠️ Before running the application download required files and use python 3.11**
     
@@ -64,7 +64,7 @@
     1.DeepDanbooru: Recognizes known characters (tag-based)
     2.CLIP-based model: Recognizes unknown characters using facial embeddings & similarity matching
 
-   **✅ Hybrid Model Workflow**
+   **⛓️‍💥Hybrid Model Workflow**
 
     1. Upload anime image
     2. Try DeepDanbooru
@@ -82,12 +82,13 @@
     We'll use it to embed the uploaded image and compare with a precomputed list of known characters
 
     pip install open_clip_torch torchvision torch
-    ✅ This installs:
+    This installs:
         >open_clip_torch – for CLIP model
         >torchvision – for image preprocessing
         >torch – for running the model
 
-    3. Face Image Database (Optional but powerful)
+# ✅ Phase 4 – Step 2: Build Character Image Database + Embeddings
+    Face Image Database (Optional but powerful)
     You’ll prepare a small DB like:
         character_db/
         ├── rem.jpg
@@ -95,3 +96,11 @@
         ├── goku.jpg
         ...
     We precompute embeddings for these using CLIP or ViT.
+    And then:
+    >Generate CLIP embeddings for each image
+    >Save them into a .pkl file for fast comparison during inference
+
+# ✅ Phase 4 – Step 3: Similarity Matching Fallback
+    If DeepDanbooru returns “Unknown Character”,
+    we’ll fallback to comparing the uploaded image with your character_db/ using CLIP embedding similarity.
+    
