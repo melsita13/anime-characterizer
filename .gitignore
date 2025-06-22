@@ -23,6 +23,13 @@ test_images/
 *.jpg
 *.png
 
+# character_db
+character_db/
+*.jpg
+*.png
+*.pkl
+*.jpeg
+
 # Mac/Linux system files
 .DS_Store
 
