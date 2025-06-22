@@ -58,3 +58,40 @@
     ✅ Character Image
     ✅ About/Bio
     ✅ List of Anime appearances
+
+# 🔧 Phase 4: Hybrid Anime Character Identification Model
+    Build a two-layer recognition system:
+    1.DeepDanbooru: Recognizes known characters (tag-based)
+    2.CLIP-based model: Recognizes unknown characters using facial embeddings & similarity matching
+
+   **✅ Hybrid Model Workflow**
+
+    1. Upload anime image
+    2. Try DeepDanbooru
+         └── If confident match → use result
+         └── Else → fallback to Vision Model
+               └── Match against known character face embeddings
+    3. Return final result to UI
+
+   **🔧 Tools We’ll Use in Phase 4**
+    
+    1. DeepDanbooru (already integrated)
+    2. CLIP (Contrastive Language–Image Pretraining)
+    OpenAI’s model to match image ↔ text descriptions
+
+    We'll use it to embed the uploaded image and compare with a precomputed list of known characters
+
+    pip install open_clip_torch torchvision torch
+    ✅ This installs:
+        >open_clip_torch – for CLIP model
+        >torchvision – for image preprocessing
+        >torch – for running the model
+
+    3. Face Image Database (Optional but powerful)
+    You’ll prepare a small DB like:
+        character_db/
+        ├── rem.jpg
+        ├── naruto.jpg
+        ├── goku.jpg
+        ...
+    We precompute embeddings for these using CLIP or ViT.
