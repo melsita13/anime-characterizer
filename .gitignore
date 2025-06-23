@@ -29,6 +29,7 @@ character_db/
 *.png
 *.pkl
 *.jpeg
+*.jfif
 
 # Mac/Linux system files
 .DS_Store

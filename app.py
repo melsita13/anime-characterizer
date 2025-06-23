@@ -9,7 +9,7 @@ uploaded_file = st.file_uploader("Upload an anime image", type=["jpg", "jpeg", "
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
-    st.image(image, caption="Uploaded Image")
+    st.image(image, caption="Uploaded Image", width=200)
 
     st.info("Processing the image...")
     st.subheader("Recognized Character")
