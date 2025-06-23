@@ -47,9 +47,9 @@
     cd DeepDanbooru
 
     2. Download the pretrained model from url and unzip in model folder 
-    (https://github.com/KichangKim/DeepDanbooru/releases/download/v3-20211112-sgd-e28/deepdanbooru-v3-20211112-sgd-e28.zip)
-
-    # 3. Install the local version
+    (https://github.com/KichangKim/DeepDanbooru/releases/)
+    download the--> "DeepDanbooru Pretrained Model v3-20211112-sgd-e28"
+    3. Install the local version
     pip install -r requirements.txt
     pip install -e .
 
@@ -88,6 +88,10 @@
         >torch – for running the model
 
 # ✅ Phase 4 – Step 2: Build Character Image Database + Embeddings
+   *or download the model .pkl file from drive link*
+   
+    Drive link---> "https://drive.google.com/file/d/1YU-fPbqCfDID1uzOmXEAeSuhRkdyKld3/view?usp=drive_link"
+
     Face Image Database (Optional but powerful)
     You’ll prepare a small DB like:
         character_db/
@@ -103,6 +107,3 @@
 # ✅ Phase 4 – Step 3: Similarity Matching Fallback
     If DeepDanbooru returns “Unknown Character”,
     we’ll fallback to comparing the uploaded image with your character_db/ using CLIP embedding similarity.
-
-
-# Melsita branch created

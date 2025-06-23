@@ -1,3 +1,4 @@
+# if and if only use when you dont get access to the drive
 from deepdanbooru import commands
 
 commands.evaluate(

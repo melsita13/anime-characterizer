@@ -21,7 +21,7 @@ if uploaded_file is not None:
 
         if st.button("Get character info"):
             with st.spinner("Fetching character details..."):
-                # Step 2: Fetch bio
+                # Step 2: Fetch character bio
                 result = fetch_character_info(character_name)
 
                 if "error" in result:
@@ -42,7 +42,7 @@ if uploaded_file is not None:
                         anime_title = related.get("anime_title", "Unknown Anime")
                         st.markdown(f"### Related Characters from *{anime_title}*")
                         cols = st.columns(5)
-                        for i, char in enumerate(related["related_characters"],[])[:5]:
+                        for i, char in enumerate(related.get("related_characters", [])[:5]):
                             with cols[i]:
                                 st.image(char["image"], width=100)
                                 st.caption(f"{char['name']} ({char['role']})")
