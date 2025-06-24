@@ -5,6 +5,7 @@ from fetch_bio import fetch_character_info
 from related_characters import get_related_characters
 from streaming_info import get_streaming_links
 from character_gallery import get_character_images
+from character_gallery import get_google_image_search
 
 st.title("🎌 Anime Character Identifier")
 
@@ -35,6 +36,10 @@ if uploaded_file is not None:
                     st.markdown("### 🖼️ More Images")
                     if "error" in gallery:
                         st.info("No additional images available.")
+                        st.markdown(
+                            f"🔎 [View more images on Google]({get_google_image_search(character_name)})"
+                        )
+
                     else:
                         img_cols = st.columns(len(gallery["images"]))
                         for i, img_url in enumerate(gallery["images"]):
@@ -50,13 +55,17 @@ if uploaded_file is not None:
                     # Step 3: Fetch related characters
                     related = get_related_characters(character_name)
                     if "error" in related:
-                        st.warning(f"Could not fetch related characters: {related['error']}")
+                        st.warning(
+                            f"Could not fetch related characters: {related['error']}"
+                        )
                         anime_title = "Unknown Anime"
                     else:
                         anime_title = related.get("anime_title", "Unknown Anime")
                         st.markdown(f"### Related Characters from *{anime_title}*")
                         cols = st.columns(5)
-                        for i, char in enumerate(related.get("related_characters", [])[:5]):
+                        for i, char in enumerate(
+                            related.get("related_characters", [])[:5]
+                        ):
                             with cols[i]:
                                 st.image(char["image"], width=100)
                                 st.caption(f"{char['name']} ({char['role']})")
