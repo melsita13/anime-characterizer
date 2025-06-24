@@ -121,4 +121,4 @@
    **🔍 Option B: Use Google Search API (Backup)**
     
     For less popular anime, use:
-        "where to watch [anime_name] site:myanimelist.net OR site:justwatch.com"
+        "where to watch [anime_name] site:myanimelist.net OR site:justwatch.com "
