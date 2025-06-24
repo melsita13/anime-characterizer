@@ -27,7 +27,6 @@ test_images/
 character_db/
 *.jpg
 *.png
-*.pkl
 *.jpeg
 *.jfif
 

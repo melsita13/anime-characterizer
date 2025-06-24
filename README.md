@@ -122,3 +122,9 @@
     
     For less popular anime, use:
         "where to watch [anime_name] site:myanimelist.net OR site:justwatch.com "
+
+# Phase 6: 🔍 Build a Smart Hybrid Search with CLIP + FAISS
+    This will allow your model to:
+        >Learn from corrected data
+        >Instantly recognize similar characters based on image embeddings
+        >Fall back on visual similarity when tag-based recognition fails
