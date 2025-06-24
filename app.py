@@ -17,6 +17,7 @@ if uploaded_file is not None:
 
     # Step 1: Detect character
     character_name = recognize_character(image)
+    character_name = character_name.split("(")[0].strip()
     character_name = st.text_input("Detected Character:", value=character_name)
 
     if character_name and character_name != "Unknown Character":
@@ -36,15 +37,14 @@ if uploaded_file is not None:
                     st.markdown("### 🖼️ More Images")
                     if "error" in gallery:
                         st.info("No additional images available.")
-                        st.markdown(
-                            f"🔎 [View more images on Google]({get_google_image_search(character_name)})"
-                        )
-
+                        if "google_search" in gallery:
+                            st.markdown(f"🔎 [Try Google Image Search]({gallery['google_search']})")
                     else:
                         img_cols = st.columns(len(gallery["images"]))
                         for i, img_url in enumerate(gallery["images"]):
                             with img_cols[i]:
                                 st.image(img_url, width=120)
+
 
                     st.markdown(f"### {result['name']}")
                     st.markdown("**About:**")

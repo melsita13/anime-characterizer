@@ -1,6 +1,19 @@
 import requests
+import urllib.parse
 
 def get_character_images(character_name):
+    # Avoid fallback names or unknown results
+    if "Related Character" in character_name or "Top Tags" in character_name or "Unknown" in character_name:
+        return {
+            "error": "Name too generic for Anilist.",
+            "google_search": get_google_image_search(character_name)
+        }
+
+    # Strip anything after '(' e.g., "Rem (Re:Zero)" → "Rem"
+    character_name = character_name.split("(")[0].strip()
+
+    print(f"[DEBUG] Searching for character: {character_name}")
+
     query = """
     query ($search: String) {
       Character(search: $search) {
@@ -25,6 +38,7 @@ def get_character_images(character_name):
       }
     }
     """
+
     variables = {"search": character_name}
     url = "https://graphql.anilist.co"
 
@@ -36,16 +50,19 @@ def get_character_images(character_name):
         print(data)
 
         if "data" not in data or not data["data"]["Character"]:
-            return {"error": "No character images found."}
+            return {
+                "error": "No character images found.",
+                "google_search": get_google_image_search(character_name)
+            }
 
         character = data["data"]["Character"]
         image_list = []
 
         # Add profile image
-        if character["image"]:
+        if character.get("image") and character["image"].get("large"):
             image_list.append(character["image"]["large"])
 
-        # Add media covers
+        # Add cover images from media
         for media in character["media"]["nodes"]:
             cover = media.get("coverImage", {}).get("large")
             if cover and cover not in image_list:
@@ -53,13 +70,15 @@ def get_character_images(character_name):
 
         print("[INFO] Images found:", image_list)
 
-        return {"images": image_list[:5]}  # Limit to 5 images
+        return {"images": image_list[:5]}
 
     except Exception as e:
         print("[ERROR]", e)
-        return {"error": str(e)}
+        return {
+            "error": str(e),
+            "google_search": get_google_image_search(character_name)
+        }
 
-import urllib.parse
 
 def get_google_image_search(character_name):
     base = "https://www.google.com/search?tbm=isch&q="
