@@ -1,6 +1,6 @@
-# 🎎 anime-characterizer
+## 🎎 anime-characterizer
 
-    "This project mainly focus on identifying anime characters, bio and behavior. Currently the model identifying some popular anime characters and for non popular its suggesting some tags that will identifys the character details. We are using pretrained DL model resnet from DeepDanbooru and showing the user interface using streamlit."
+   *"This project mainly focus on identifying anime characters, bio and behavior. Currently the model identifying some popular anime characters and for non popular its suggesting some tags that will identifys the character details. We are using pretrained DL model resnet from DeepDanbooru and showing the user interface using streamlit."*
 
 **⚠️ Before running the application download required files and use python 3.11**
     
@@ -49,6 +49,7 @@
     2. Download the pretrained model from url and unzip in model folder 
     (https://github.com/KichangKim/DeepDanbooru/releases/)
     download the--> "DeepDanbooru Pretrained Model v3-20211112-sgd-e28"
+
     3. Install the local version
     pip install -r requirements.txt
     pip install -e .
@@ -88,7 +89,7 @@
         >torch – for running the model
 
 # ✅ Phase 4 – Step 2: Build Character Image Database + Embeddings
-   *or download the model .pkl file from drive link*
+   **or download the model .pkl file from drive link**
    
     Drive link---> "https://drive.google.com/file/d/1YU-fPbqCfDID1uzOmXEAeSuhRkdyKld3/view?usp=drive_link"
 
@@ -107,3 +108,17 @@
 # ✅ Phase 4 – Step 3: Similarity Matching Fallback
     If DeepDanbooru returns “Unknown Character”,
     we’ll fallback to comparing the uploaded image with your character_db/ using CLIP embedding similarity.
+
+# 🎯 Phase 5: Show Where to Watch the anime
+    After identifying the character → showing their anime → also show where the anime is streaming (like Crunchyroll, Netflix, etc.)
+
+   **🔗 Option A: Use Anilist API (Best)**
+
+    Their API includes streaming info like:
+        Available on Crunchyroll, Funimation, Hulu, Netflix (region-specific)
+        Fast and reliable
+        Requires GraphQL query (we'll handle it)
+   **🔍 Option B: Use Google Search API (Backup)**
+    
+    For less popular anime, use:
+        "where to watch [anime_name] site:myanimelist.net OR site:justwatch.com"
