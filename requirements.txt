@@ -6,3 +6,6 @@ numpy
 requests
 faiss-cpu 
 open-clip-torch
+deepdanbooru
+torch
+open_clip

@@ -31,7 +31,7 @@ def get_image_embedding(image: Image.Image) -> torch.Tensor:
 # 🔄 EMBEDDING DB BUILDER
 # =======================
 
-DB_FOLDER = './character_db'
+DB_FOLDER = './test_images'
 EMBEDDING_FILE = './character_db/character_embeddings.pkl'
 
 def build_db():

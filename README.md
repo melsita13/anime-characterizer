@@ -1,4 +1,4 @@
-## 🎎 anime-characterizer
+# 🎎 anime-characterizer
 
    *"This project mainly focus on identifying anime characters, bio and behavior. Currently the model identifying some popular anime characters and for non popular its suggesting some tags that will identifys the character details. We are using pretrained DL model resnet from DeepDanbooru and showing the user interface using streamlit."*
 
@@ -39,7 +39,7 @@
 
 # 🔧 Phase 2️⃣ Revised: Using DeepDanbooru ONNX Model
     Install the ONNX wrapper for DeepDanbooru:
-    ** pip install deepdanbooru-onnx
+        pip install deepdanbooru-onnx
 
 # 🔧 Phase 2: Upgrade to DeepDanbooru (TensorFlow Version)
     1. clone pretrained model
