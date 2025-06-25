@@ -7,75 +7,88 @@ from fetch_bio import fetch_character_info
 from streaming_info import get_streaming_links
 from character_gallery import get_character_images, get_google_image_search
 
-# Create training_data folder if not exists
+# Setup
 os.makedirs("training_data", exist_ok=True)
+st.set_page_config(page_title="Anime Character Identifier", page_icon="🎌")
 
-st.title("🎌 Anime Character Identifier")
+st.markdown("<h1 style='text-align: center;'>🎌 Anime Character Identifier</h1>", unsafe_allow_html=True)
+st.markdown("---")
 
-uploaded_file = st.file_uploader("Upload an anime image", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("📤 Upload an anime image", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
-    st.image(image, caption="Uploaded Image", width=150)
 
-    # Step 1: Detect character
-    character_name = recognize_character(image)
-    character_name = character_name.split("(")[0].strip()
-    st.subheader("Recognized Character")
-    st.write(f"🔍 Detected: `{character_name}`")
+    # Layout for image + recognition result
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        st.image(image, caption="📷 Uploaded Image", width=180)
 
-    # Feedback: Is this correct?
-    feedback = st.radio("Is the recognized character correct?", ("Yes", "No"))
-    
-    if feedback == "No":
-        corrected_name = st.text_input("Enter the correct character name:")
-        if st.button("Submit Correction"):
-            timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-            filename = f"{corrected_name}_{timestamp}.jpg"
-            image.save(os.path.join("training_data", filename))
-            with open("labels.csv", "a") as f:
-                f.write(f"{corrected_name},{filename}\n")
-            st.success("✅ Correction saved for training!")
+    with col2:
+        character_name = recognize_character(image)
+        character_name = character_name.split("(")[0].strip()
+        st.markdown("### 🔍 Recognized Character:")
+        st.success(f"`{character_name}`")
 
-    # Let user still proceed with the current or corrected name
-    character_name = st.text_input("Proceed with character:", value=character_name)
+        feedback = st.radio("🤔 Is this correct?", ("Yes", "No"))
+        if feedback == "No":
+            corrected_name = st.text_input("✏️ Enter the correct name:")
+            if st.button("✅ Submit Correction"):
+                timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+                filename = f"{corrected_name}_{timestamp}.jpg"
+                image.save(os.path.join("training_data", filename))
+                with open("labels.csv", "a") as f:
+                    f.write(f"{corrected_name},{filename}\n")
+                st.success("Correction saved for training!")
 
-    if st.button("Get character info"):
-        with st.spinner("Fetching character details..."):
-            # Step 2: Fetch bio
+        character_name = st.text_input("📎 Proceed with character:", value=character_name)
+
+    st.markdown("---")
+
+    if st.button("📄 Get Character Info"):
+        with st.spinner("Fetching details... please wait..."):
             result = fetch_character_info(character_name)
 
             if "error" in result:
-                st.error(result["error"])
+                st.error(f"❌ {result['error']}")
             else:
-                st.image(result["image_url"], width=200)
+                # Character Header
+                st.image(result["image_url"], width=180)
+                st.markdown(f"## 👤 {result['name']}")
+                st.markdown("#### 🧾 About:")
+                st.markdown(result["about"] or "_No bio available._")
 
-                # Step 2.5: Character Gallery
+                # Anime Appearances
+                st.markdown("#### 🎞️ Anime Appearances:")
+                anime_titles = result["anime"] or ["No known anime."]
+                st.markdown("• " + "<br>• ".join(anime_titles), unsafe_allow_html=True)
+
+                # Gallery
                 gallery = get_character_images(character_name)
-                st.markdown("### 🖼️ More Images")
+                st.markdown("#### 🖼️ Character Gallery")
                 if "error" in gallery:
                     st.info("No additional images available.")
                     if "google_search" in gallery:
-                        st.markdown(f"🔎 [Try Google Image Search]({gallery['google_search']})")
+                        st.markdown(f"🔎 [Search on Google Images]({gallery['google_search']})")
                 else:
                     img_cols = st.columns(len(gallery["images"]))
                     for i, img_url in enumerate(gallery["images"]):
                         with img_cols[i]:
-                            st.image(img_url, width=120)
+                            st.image(img_url, width=100)
 
-                st.markdown(f"### {result['name']}")
-                st.markdown("**About:**")
-                st.markdown(result["about"] or "No bio available.")
-                st.markdown("**Anime Appearances:**")
-                st.markdown(", ".join(result["anime"]) or "No data.")
+                # Streaming Info
+                st.markdown("#### 📺 Where to Watch")
+                if anime_titles and anime_titles[0] != "No known anime.":
+                    anime_title = anime_titles[0]
+                else:
+                    anime_title = character_name
 
-                # Step 4: Streaming Info
-                streaming = get_streaming_links(character_name)
-                st.markdown("### 📺 Where to Watch")
+                streaming = get_streaming_links(anime_title)
                 if "error" in streaming:
-                    st.info("Streaming info not available.")
+                    st.info("ℹ️ Streaming info not available.")
                 else:
                     for site, url in streaming["links"].items():
                         st.markdown(f"- [{site}]({url})")
+
 else:
-    st.warning("Please upload a clear anime character image.")
+    st.warning("⚠️ Please upload a clear anime character image.")
