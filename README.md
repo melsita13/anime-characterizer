@@ -3,70 +3,70 @@
 > *"This project identifies anime characters, fetches their bio and behavior using a hybrid DL model approach. It uses DeepDanbooru (ResNet) for tag-based recognition and OpenAI CLIP for fallback similarity matching. The frontend is built with Streamlit for interactive UI."*
 
 **⚠️ Prerequisites:**
-    - Python 3.11
-    - Download the pretrained model files (DeepDanbooru, CLIP embeddings) before running
+- Python 3.11
+- Download the pretrained model files (DeepDanbooru, CLIP embeddings) before running
 
 ---
 
 ## ⚙️ How It Works
-    1. Upload an anime image
-    2. Detect one or more characters
-    3. Recognize each using DeepDanbooru + CLIP hybrid model
-    4. Fetch character bio from MyAnimeList (via Jikan API)
-    5. Show anime appearances and streaming links
+1. Upload an anime image
+2. Detect one or more characters
+3. Recognize each using DeepDanbooru + CLIP hybrid model
+4. Fetch character bio from MyAnimeList (via Jikan API)
+5. Show anime appearances and streaming links
 
 ---
 
 ## 📁 Project Structure
 ```
-    anime-characterizer/
-    ├── app.py                        # Main Streamlit UI
-    ├── recognizer.py                # Recognition logic (DeepDanbooru + CLIP)
-    ├── fallback_matcher.py          # CLIP-based fallback matcher
-    ├── fetch_bio.py                 # Jikan API integration
-    ├── streaming_info.py            # Anilist API integration
-    ├── character_gallery.py         # Extra image search and gallery
-    ├── requirements.txt             # Project dependencies
-    ├── models/
-    │   └── deepdanbooru_model/
-    │       ├── model.h5
-    │       ├── project.json
-    │       └── tags.txt
-    ├── character_db/                # Optional: custom face image DB for CLIP
-    │   ├── rem.jpg
-    │   ├── goku.jpg
-    │   └── ...
-    ├── test_images/                 # Sample input images
-    │   └── rem.jpg
-    ├── labels.csv                   # User corrections for retraining
-    └── DeepDanbooru/                # Cloned DeepDanbooru repo
-    ```
+anime-characterizer/
+├── app.py                        # Main Streamlit UI
+├── recognizer.py                # Recognition logic (DeepDanbooru + CLIP)
+├── fallback_matcher.py          # CLIP-based fallback matcher
+├── fetch_bio.py                 # Jikan API integration
+├── streaming_info.py            # Anilist API integration
+├── character_gallery.py         # Extra image search and gallery
+├── requirements.txt             # Project dependencies
+├── models/
+│   └── deepdanbooru_model/
+│       ├── model.h5
+│       ├── project.json
+│       └── tags.txt
+├── character_db/                # Optional: custom face image DB for CLIP
+│   ├── rem.jpg
+│   ├── goku.jpg
+│   └── ...
+├── test_images/                 # Sample input images
+│   └── rem.jpg
+├── labels.csv                   # User corrections for retraining
+└── DeepDanbooru/                # Cloned DeepDanbooru repo
+```
 
 ---
 
 ## ▶️ Run the App
-    ```bash
-    streamlit run app.py
-    ```
+```bash
+streamlit run app.py
+```
 
 ---
 
 ## 🔧 Phase-wise Breakdown
 
 ### 🔧 Phase 1: Project Setup
-    - Upload image → identify character using DeepDanbooru
-    - Fetch and display bio with Jikan API
+- Upload image → identify character using DeepDanbooru
+- Fetch and display bio with Jikan API
 
 ### 🔧 Phase 2: Use TensorFlow DeepDanbooru
-    1. Clone:  
-        ```bash
-        git clone https://github.com/KichangKim/DeepDanbooru.git
-        cd DeepDanbooru
-        pip install -r requirements.txt
-        pip install -e .
-        ```
-    2. Download model:
-        [DeepDanbooru Pretrained Model v3](https://github.com/KichangKim/DeepDanbooru/releases/)
+1. Clone:  
+```bash
+git clone https://github.com/KichangKim/DeepDanbooru.git
+cd DeepDanbooru
+pip install -r requirements.txt
+pip install -e .
+```
+2. Download model:
+[DeepDanbooru Pretrained Model v3](https://github.com/KichangKim/DeepDanbooru/releases/)
 
 ### 🔧 Phase 3: Jikan API Integration
 - Fetch:
