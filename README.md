@@ -1,130 +1,130 @@
-# 🎎 anime-characterizer
+# 🎎 Anime Characterizer
 
-   *"This project mainly focus on identifying anime characters, bio and behavior. Currently the model identifying some popular anime characters and for non popular its suggesting some tags that will identifys the character details. We are using pretrained DL model resnet from DeepDanbooru and showing the user interface using streamlit."*
+> *"This project identifies anime characters, fetches their bio and behavior using a hybrid DL model approach. It uses DeepDanbooru (ResNet) for tag-based recognition and OpenAI CLIP for fallback similarity matching. The frontend is built with Streamlit for interactive UI."*
 
-**⚠️ Before running the application download required files and use python 3.11**
-    
-# ⚙️ Working
-    1. Run the the app.py
-    2. The page will load in browser
-    3. Upload anime image
-    4. Character identified with bio and behavior
+**⚠️ Prerequisites:**
+    - Python 3.11
+    - Download the pretrained model files (DeepDanbooru, CLIP embeddings) before running
 
-# 📂 File Structure
+---
+
+## ⚙️ How It Works
+    1. Upload an anime image
+    2. Detect one or more characters
+    3. Recognize each using DeepDanbooru + CLIP hybrid model
+    4. Fetch character bio from MyAnimeList (via Jikan API)
+    5. Show anime appearances and streaming links
+
+---
+
+## 📁 Project Structure
+```
     anime-characterizer/
-    ├── app.py
-    ├── recognizer.py
-    ├── fetch_bio.py
-    ├── requirements.txt
-    ├── .gitignore
-    ├── test_images/
-    │   └── rem.jpg
+    ├── app.py                        # Main Streamlit UI
+    ├── recognizer.py                # Recognition logic (DeepDanbooru + CLIP)
+    ├── fallback_matcher.py          # CLIP-based fallback matcher
+    ├── fetch_bio.py                 # Jikan API integration
+    ├── streaming_info.py            # Anilist API integration
+    ├── character_gallery.py         # Extra image search and gallery
+    ├── requirements.txt             # Project dependencies
     ├── models/
     │   └── deepdanbooru_model/
     │       ├── model.h5
     │       ├── project.json
-    │       ├── tags.txt
-    ├── DeepDanbooru/
-    │   ├── deepdanbooru/
-    │   ├── requirements.txt
+    │       └── tags.txt
+    ├── character_db/                # Optional: custom face image DB for CLIP
+    │   ├── rem.jpg
+    │   ├── goku.jpg
     │   └── ...
+    ├── test_images/                 # Sample input images
+    │   └── rem.jpg
+    ├── labels.csv                   # User corrections for retraining
+    └── DeepDanbooru/                # Cloned DeepDanbooru repo
+    ```
 
-# 🔧 Phase 1: Project Setup & Tech Stack
-    1.Upload an anime image
-    2.Identify the character using a pretrained model
-    3.Fetch that character's bio using the Jikan API (MyAnimeList)
-<!-- how to run -->
-# ▶️ run streamlit
+---
+
+## ▶️ Run the App
+    ```bash
     streamlit run app.py
+    ```
 
-# 🔧 Phase 2️⃣ Revised: Using DeepDanbooru ONNX Model
-    Install the ONNX wrapper for DeepDanbooru:
-        pip install deepdanbooru-onnx
+---
 
-# 🔧 Phase 2: Upgrade to DeepDanbooru (TensorFlow Version)
-    1. clone pretrained model
-    git clone https://github.com/KichangKim/DeepDanbooru.git
-    cd DeepDanbooru
+## 🔧 Phase-wise Breakdown
 
-    2. Download the pretrained model from url and unzip in model folder 
-    (https://github.com/KichangKim/DeepDanbooru/releases/)
-    download the--> "DeepDanbooru Pretrained Model v3-20211112-sgd-e28"
+### 🔧 Phase 1: Project Setup
+    - Upload image → identify character using DeepDanbooru
+    - Fetch and display bio with Jikan API
 
-    3. Install the local version
-    pip install -r requirements.txt
-    pip install -e .
+### 🔧 Phase 2: Use TensorFlow DeepDanbooru
+    1. Clone:  
+        ```bash
+        git clone https://github.com/KichangKim/DeepDanbooru.git
+        cd DeepDanbooru
+        pip install -r requirements.txt
+        pip install -e .
+        ```
+    2. Download model:
+        [DeepDanbooru Pretrained Model v3](https://github.com/KichangKim/DeepDanbooru/releases/)
 
-# 🌐 Phase 3 – Jikan API Integration (MyAnimeList)
-    Take the recognized character name (e.g., "Rem") → Query the Jikan API → Display:
-    ✅ Character Image
-    ✅ About/Bio
-    ✅ List of Anime appearances
+### 🔧 Phase 3: Jikan API Integration
+- Fetch:
+  - ✅ Name & Image
+  - ✅ About/Bio
+  - ✅ Anime Appearances
 
-# 🔧 Phase 4: Hybrid Anime Character Identification Model
-    Build a two-layer recognition system:
-    1.DeepDanbooru: Recognizes known characters (tag-based)
-    2.CLIP-based model: Recognizes unknown characters using facial embeddings & similarity matching
+### 🔧 Phase 4: Hybrid Recognition (DeepDanbooru + CLIP)
+**Fallback Flow:**
+```
+If DeepDanbooru fails (low confidence)
+→ Use CLIP to compare uploaded image with a DB of known character images
+→ Return most visually similar result
+```
 
-   **⛓️‍💥Hybrid Model Workflow**
+Tools:
+```bash
+pip install open_clip_torch torchvision torch
+```
 
-    1. Upload anime image
-    2. Try DeepDanbooru
-         └── If confident match → use result
-         └── Else → fallback to Vision Model
-               └── Match against known character face embeddings
-    3. Return final result to UI
+### ✅ Phase 4.2: Build Embeddings DB (Optional but Recommended)
+- Create folder: `character_db/`
+- Place 100+ known anime character images
+- Run embedding script → saves `.pkl` DB
+- OR download prebuilt DB: [Drive link](https://drive.google.com/file/d/1YU-fPbqCfDID1uzOmXEAeSuhRkdyKld3/view)
 
-   **🔧 Tools We’ll Use in Phase 4**
-    
-    1. DeepDanbooru (already integrated)
-    2. CLIP (Contrastive Language–Image Pretraining)
-    OpenAI’s model to match image ↔ text descriptions
+### 🔧 Phase 5: Where to Watch
+- Fetch anime title → query AniList GraphQL API
+- Display supported platforms:
+  - ✅ Crunchyroll
+  - ✅ Netflix
+  - ✅ Funimation
 
-    We'll use it to embed the uploaded image and compare with a precomputed list of known characters
+**Fallback (Planned)**: Use Google Search for obscure anime
 
-    pip install open_clip_torch torchvision torch
-    This installs:
-        >open_clip_torch – for CLIP model
-        >torchvision – for image preprocessing
-        >torch – for running the model
+### 🔧 Phase 6: FAISS + CLIP Smart Search (Coming Soon)
+- Learn from user corrections
+- Search via visual similarity
+- Fast image-indexed retrieval using FAISS
 
-# ✅ Phase 4 – Step 2: Build Character Image Database + Embeddings
-   **or download the model .pkl file from drive link**
-   
-    Drive link---> "https://drive.google.com/file/d/1YU-fPbqCfDID1uzOmXEAeSuhRkdyKld3/view?usp=drive_link"
+---
 
-    Face Image Database (Optional but powerful)
-    You’ll prepare a small DB like:
-        character_db/
-        ├── rem.jpg
-        ├── naruto.jpg
-        ├── goku.jpg
-        ...
-    We precompute embeddings for these using CLIP or ViT.
-    And then:
-    >Generate CLIP embeddings for each image
-    >Save them into a .pkl file for fast comparison during inference
+## 🧠 Future Plans
+- [ ] Integrate YOLOv8 for multiple face/character detection
+- [ ] Expand character DB (1000+ embeddings)
+- [ ] Add retraining support for fine-tuning
+- [ ] Host on HuggingFace Spaces or Streamlit Cloud
 
-# ✅ Phase 4 – Step 3: Similarity Matching Fallback
-    If DeepDanbooru returns “Unknown Character”,
-    we’ll fallback to comparing the uploaded image with your character_db/ using CLIP embedding similarity.
+---
 
-# 🎯 Phase 5: Show Where to Watch the anime
-    After identifying the character → showing their anime → also show where the anime is streaming (like Crunchyroll, Netflix, etc.)
+## 🤝 Credits
+- DeepDanbooru (KichangKim)
+- Jikan API (MyAnimeList)
+- AniList API
+- OpenAI CLIP
 
-   **🔗 Option A: Use Anilist API (Best)**
+---
 
-    Their API includes streaming info like:
-        Available on Crunchyroll, Funimation, Hulu, Netflix (region-specific)
-        Fast and reliable
-        Requires GraphQL query (we'll handle it)
-   **🔍 Option B: Use Google Search API (Backup)**
-    
-    For less popular anime, use:
-        "where to watch [anime_name] site:myanimelist.net OR site:justwatch.com "
-
-# Phase 6: 🔍 Build a Smart Hybrid Search with CLIP + FAISS
-    This will allow your model to:
-        >Learn from corrected data
-        >Instantly recognize similar characters based on image embeddings
-        >Fall back on visual similarity when tag-based recognition fails
+## 📞 Contact / Contributions
+Feel free to contribute or open an issue.
+> Built with ❤️ by Team 18

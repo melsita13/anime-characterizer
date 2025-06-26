@@ -9,3 +9,4 @@ open-clip-torch
 deepdanbooru
 torch
 open_clip
+ultralytics
