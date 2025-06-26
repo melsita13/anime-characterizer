@@ -20,23 +20,23 @@ def get_streaming_links(anime_title):
     url = "https://graphql.anilist.co"
 
     try:
-        response = requests.post(url, json={"query":query, "variables":variables})
+        response = requests.post(url, json={"query": query, "variables": variables})
         data = response.json()
 
-        if "data" not in data or not data["data"]["media"]:
+        if "data" not in data or not data["data"]["Media"]:
             return {"error": "No streaming data found."}
-        
-        episodes = data["data"]["media"]["streamingEpisodes"]
+
+        episodes = data["data"]["Media"]["streamingEpisodes"]
         if not episodes:
-            return {"error": "No streaming episodes availbale"}
-        
+            return {"error": "No streaming episodes available."}
+
         links_by_site = {}
         for ep in episodes:
             site = ep["site"]
             if site not in links_by_site:
                 links_by_site[site] = ep["url"]
-                
+
         return {"links": links_by_site}
-    
+
     except Exception as e:
-        return {"error":str(e)}
+        return {"error": str(e)}
