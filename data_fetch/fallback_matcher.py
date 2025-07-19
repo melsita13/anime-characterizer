@@ -1,9 +1,8 @@
-import torch
 import pickle
 import torch.nn.functional as F
 from clip.clip_embedder import get_image_embedding
 
-with open('../character_db/character_embeddings.pkl', 'rb') as f:
+with open('./character_db/character_embeddings.pkl', 'rb') as f:
     embedding_db = pickle.load(f)
 
 def match_with_clip(image):

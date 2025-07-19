@@ -1,9 +1,9 @@
 import deepdanbooru as dd
 from PIL import Image
 import numpy as np
-from fallback_matcher import match_with_clip
+from data_fetch.fallback_matcher import match_with_clip
 
-Model_Path = "../models/deepdanbooru_model"
+Model_Path = "./models/deepdanbooru_model"
 
 # Load once
 model = dd.project.load_model_from_project(Model_Path, compile_model=False)
