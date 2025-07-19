@@ -102,6 +102,10 @@ pip install open_clip_torch torchvision torch
 
 **Fallback (Planned)**: Use Google Search for obscure anime
 
+## Yolo Model
+  pip install ultralytics
+
+
 ### 🔧 Phase 6: FAISS + CLIP Smart Search (Coming Soon)
 - Learn from user corrections
 - Search via visual similarity
