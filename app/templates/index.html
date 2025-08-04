@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Characterizer</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Anime Characterizer</h1>
+        <p>Upload an image to identify the anime character!</p>
+        
+        <input type="file" id="imageInput" accept="image/*">
+        <button onclick="predictCharacter()">Identify Character</button>
+
+        <div id="resultContainer" style="display: none;">
+            <h2>Prediction Results</h2>
+            <div id="loading" class="spinner" style="display: none;"></div>
+            <p><strong>Character:</strong> <span id="characterName"></span></p>
+            <p><strong>Confidence:</strong> <span id="confidenceScore"></span>%</p>
+            <p><strong>Anime:</strong> <span id="animeName"></span></p>
+            <p><strong>Description:</strong> <span id="characterDescription"></span></p>
+            <p><strong>Where to Watch:</strong> <span id="watchLinks"></span></p>
+            <h3>Related Images</h3>
+            <div id="relatedImages" class="image-gallery"></div>
+        </div>
+        <div id="error" style="display: none; color: red;"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

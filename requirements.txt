@@ -1,6 +1,6 @@
-streamlit
-opencv-python
-pillow
+Flask
+tensorflow
+Pillow
 requests
 numpy
-requests
+gunicorn # for production deployment later

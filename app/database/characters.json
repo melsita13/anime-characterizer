@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Naruto Uzumaki",
+        "anime": "Naruto",
+        "description": "A boisterous, happy-go-lucky ninja from the Hidden Leaf Village...",
+        "related_images": [
+            "https://example.com/naruto1.jpg",
+            "https://example.com/naruto2.jpg"
+        ],
+        "where_to_watch": ["Crunchyroll", "Netflix"]
+    },
+    {
+        "name": "Eren Yeager",
+        "anime": "Attack on Titan",
+        "description": "The main protagonist of Attack on Titan. He seeks to eradicate the Titans...",
+        "related_images": [
+            "https://example.com/eren1.jpg",
+            "https://example.com/eren2.jpg"
+        ],
+        "where_to_watch": ["Crunchyroll", "Hulu"]
+    }
+]
