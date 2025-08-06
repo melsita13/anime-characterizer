@@ -7,9 +7,8 @@ from fetch_bio import fetch_character_info
 from streaming.streaming_info import get_streaming_links
 from character_gallery import get_character_images
 from detector.yolo_detector import detect_characters
-import re
 import csv
-from utils.name_cleaner import clean_nameclean_character_names
+from utils.name_cleaner import clean_character_names
 
 os.makedirs("training_data", exist_ok=True)
 st.set_page_config(

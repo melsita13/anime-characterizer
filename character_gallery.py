@@ -1,4 +1,3 @@
-import requests
 import urllib.parse
 from utils.name_cleaner import clean_character_names
 from utils.api_handler import make_api_request, ANILIST_URL

@@ -1,4 +1,5 @@
-import requests
+from utils.api_handler import make_api_request, ANILIST_URL
+
 
 def get_streaming_links(anime_title):
     query = """
@@ -17,26 +18,22 @@ def get_streaming_links(anime_title):
     }
     """
     variables = {"search": anime_title}
-    url = "https://graphql.anilist.co"
 
-    try:
-        response = requests.post(url, json={"query": query, "variables": variables})
-        data = response.json()
+    data = make_api_request(
+        ANILIST_URL, method="POST", json={"query": query, "variables": variables}
+    )
 
-        if "data" not in data or not data["data"]["Media"]:
-            return {"error": "No streaming data found."}
+    if "error" in data or "data" not in data or not data["data"]["Media"]:
+        return {"error": "No streaming data found."}
 
-        episodes = data["data"]["Media"]["streamingEpisodes"]
-        if not episodes:
-            return {"error": "No streaming episodes available."}
+    episodes = data["data"]["Media"]["streamingEpisodes"]
+    if not episodes:
+        return {"error": "No streaming episodes available."}
 
-        links_by_site = {}
-        for ep in episodes:
-            site = ep["site"]
-            if site not in links_by_site:
-                links_by_site[site] = ep["url"]
+    links_by_site = {}
+    for ep in episodes:
+        site = ep["site"]
+        if site not in links_by_site:
+            links_by_site[site] = ep["url"]
 
-        return {"links": links_by_site}
-
-    except Exception as e:
-        return {"error": str(e)}
+    return {"links": links_by_site}
