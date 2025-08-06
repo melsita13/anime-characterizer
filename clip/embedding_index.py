@@ -12,7 +12,7 @@ LABELS_FILE = "./training_data/labels.csv"
 INDEX_FILE = "./character_db/character_index.faiss"
 LABEL_MAP_FILE = "./character_db/index_to_label.json"
 
-# Collect image paths and labels
+
 images = []
 labels = []
 
@@ -50,4 +50,4 @@ index_to_label = {i: labels[i] for i in range(len(labels))}
 with open(LABEL_MAP_FILE, "w") as f:
     json.dump(index_to_label, f)
 
-print(f"[✅] Saved index with {len(labels)} entries.")
+print(f"Saved index with {len(labels)} entries.")

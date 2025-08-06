@@ -1,13 +1,22 @@
 import deepdanbooru as dd
 from PIL import Image
 import numpy as np
+import streamlit as st
 from fallback_matcher import match_with_clip
+from faiss_clip_infer import recognize_character as faiss_recognizer
 
 Model_Path = "./models/deepdanbooru_model"
 
-# Load once
-model = dd.project.load_model_from_project(Model_Path, compile_model=False)
-tags = dd.project.load_tags_from_project(Model_Path)
+@st.cache_resource
+def load_deepdanbooru_model():
+    """Load the DeepDanbooru model and tags."""
+    print("Loading DeepDanbooru model and tags...")
+    model = dd.project.load_model_from_project(Model_Path, compile_model=False)
+    tags = dd.project.load_tags_from_project(Model_Path)
+    print("DeepDanbooru model and tags loaded successfully.")
+    return model, tags
+
+model, tags = load_deepdanbooru_model()
 
 def preprocess_image(image: Image.Image, size: int = 512) -> np.array:
     image = image.convert("RGB")
@@ -19,13 +28,12 @@ def preprocess_image(image: Image.Image, size: int = 512) -> np.array:
     background.paste(image, ((size - new_size[0]) // 2, (size - new_size[1]) // 2))
     image_array = np.array(background) / 255.0
     return image_array.reshape((1, size, size, 3))
+
 def recognize_characters(image: Image.Image, top_k=3) -> list:
     image_array = preprocess_image(image)
-
     predictions = model.predict(image_array)[0]
     tag_confidence = {tag: predictions[i] for i, tag in enumerate(tags)}
 
-    # Step 1: Character tags
     characters = {
         tag.split("character:")[1].replace("_", " ").title(): conf
         for tag, conf in tag_confidence.items()
@@ -36,7 +44,6 @@ def recognize_characters(image: Image.Image, top_k=3) -> list:
         sorted_characters = sorted(characters.items(), key=lambda x: x[1], reverse=True)
         return [name for name, _ in sorted_characters[:top_k]]
 
-    # Step 2: Anime-style fallback names
     probable_names = {
         tag.split("(")[0].replace("_", " ").title(): conf
         for tag, conf in tag_confidence.items()
@@ -47,7 +54,10 @@ def recognize_characters(image: Image.Image, top_k=3) -> list:
         sorted_names = sorted(probable_names.items(), key=lambda x: x[1], reverse=True)
         return [name for name, _ in sorted_names[:top_k]]
 
-    # Step 3: CLIP fallback
+    faiss_results = faiss_recognizer(image, top_k=top_k)
+    if faiss_results:
+        return [f"{name} (via FAISS)" for name, _ in faiss_results]
+
     best_clip_match, similarity = match_with_clip(image)
     if similarity > 0.65:
         return [f"{best_clip_match} (via CLIP, {similarity:.2f})"]
