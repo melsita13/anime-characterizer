@@ -8,6 +8,8 @@ from streaming.streaming_info import get_streaming_links
 from character_gallery import get_character_images
 from detector.yolo_detector import detect_characters
 import re
+import csv
+from utils.name_cleaner import clean_nameclean_character_names
 
 os.makedirs("training_data", exist_ok=True)
 st.set_page_config(
@@ -40,9 +42,7 @@ if uploaded_file:
 
             with col2:
                 character_names = recognize_characters(face, top_k=3)
-                character_names = [
-                    re.sub(r"\\s*\\(.*?\\)", "", name).strip() for name in character_names
-                ]
+                character_names = clean_character_names(character_names)
 
                 st.markdown("#### 🔍 Recognized Characters")
                 if character_names:
@@ -51,50 +51,67 @@ if uploaded_file:
                 else:
                     st.warning("No recognizable characters detected.")
 
-                feedback = st.radio("🤔 Is this correct?", ("Yes", "No"), horizontal=True, key=f"feedback_{i}")
+                feedback = st.radio(
+                    "🤔 Is this correct?",
+                    ("Yes", "No"),
+                    horizontal=True,
+                    key=f"feedback_{i}",
+                )
                 if feedback == "No":
-                    corrected_name = st.text_input("✏️ Enter the correct name:", key=f"correction_{i}")
-                    if st.button("✅ Submit Correction", key=f"submit_{i}"):
+                    corrected_name = st.text_input(
+                        "✏️ Enter the correct name:", key=f"correction_{i}"
+                    )
+                    if st.button("Submit Correction", key=f"submit_{i}"):
                         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
                         filename = f"{corrected_name}_{timestamp}.jpg"
                         face.save(os.path.join("training_data", filename))
-                        with open("./character_db/character_embeddings.pkl", "a") as f:
-                            f.write(f"{corrected_name},{filename}\n")
-                        st.success("✅ Correction saved for training!")
+
+                        labels_file_path = os.path.join("training_data", "labels.csv")
+                        with open(labels_file_path, "a", newline="") as labels_file:
+                            writer = csv.writer(labels_file)
+                            writer.writerow([corrected_name, filename])
+                        st.success(
+                            "Correction submitted successfully! Thank you for your contribution."
+                        )
+                    else:
+                        st.info("Please submit a correction if the name is incorrect.")
 
                 if character_names:
                     selected_character = st.selectbox(
-                        "📌 Proceed with character:", character_names, key=f"select_{i}"
+                        "Proceed with character:", character_names, key=f"select_{i}"
                     )
                 else:
-                    selected_character = st.text_input("📌 Enter character manually:", key=f"manual_{i}")
+                    selected_character = st.text_input(
+                        "Enter character manually:", key=f"manual_{i}"
+                    )
 
-                if st.button("📄 Get Character Info", key=f"info_{i}"):
-                    with st.spinner("🔎 Fetching character details..."):
+                if st.button("Get Character Info", key=f"info_{i}"):
+                    with st.spinner("Fetching character details..."):
                         result = fetch_character_info(selected_character)
 
                         if "error" in result:
-                            st.error(f"❌ {result['error']}")
+                            st.error(f"{result['error']}")
                         else:
                             st.image(result["image_url"], width=180)
-                            st.markdown(f"### 👤 {result['name']}")
+                            st.markdown(f"{result['name']}")
 
-                            with st.expander("📿 About"):
+                            with st.expander("About"):
                                 st.markdown(result["about"] or "_No bio available._")
 
-                            with st.expander("🎮 Anime Appearances"):
+                            with st.expander("Anime Appearances"):
                                 anime_titles = result["anime"] or ["No known anime."]
                                 st.markdown(
-                                    "• " + "<br>• ".join(anime_titles), unsafe_allow_html=True
+                                    "• " + "<br>• ".join(anime_titles),
+                                    unsafe_allow_html=True,
                                 )
 
-                            st.markdown("### 🖼️ Character Gallery")
+                            st.markdown("Character Gallery")
                             gallery = get_character_images(selected_character)
                             if "error" in gallery:
                                 st.info("No additional images available.")
                                 if "google_search" in gallery:
                                     st.markdown(
-                                        f"🔎 [Search on Google Images]({gallery['google_search']})"
+                                        f"[Search on Google Images]({gallery['google_search']})"
                                     )
                             else:
                                 num_images = len(gallery["images"])
@@ -110,7 +127,7 @@ if uploaded_file:
                                             unsafe_allow_html=True,
                                         )
 
-                            st.markdown("### 📺 Where to Watch")
+                            st.markdown("Where to Watch")
                             anime_title = (
                                 anime_titles[0]
                                 if anime_titles and anime_titles[0] != "No known anime."
@@ -119,7 +136,7 @@ if uploaded_file:
                             streaming = get_streaming_links(anime_title)
 
                             if "error" in streaming:
-                                st.info("ℹ️ Streaming info not available.")
+                                st.info("Streaming info not available.")
                             else:
                                 for site, url in streaming["links"].items():
                                     st.markdown(
@@ -137,9 +154,9 @@ if uploaded_file:
                                         unsafe_allow_html=True,
                                     )
 
-                            st.success("✅ Done! All character info loaded.")
+                            st.success("Done! All character info loaded.")
 else:
-    st.info("👆 Upload an anime image to get started!")
+    st.info("Upload an anime image to get started!")
 
 st.markdown(
     """
