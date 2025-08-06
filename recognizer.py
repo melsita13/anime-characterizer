@@ -3,7 +3,6 @@ from PIL import Image
 import numpy as np
 import streamlit as st
 from fallback_matcher import match_with_clip
-from faiss_clip_infer import recognize_character as faiss_recognizer
 
 Model_Path = "./models/deepdanbooru_model"
 
@@ -53,10 +52,6 @@ def recognize_characters(image: Image.Image, top_k=3) -> list:
     if probable_names:
         sorted_names = sorted(probable_names.items(), key=lambda x: x[1], reverse=True)
         return [name for name, _ in sorted_names[:top_k]]
-
-    faiss_results = faiss_recognizer(image, top_k=top_k)
-    if faiss_results:
-        return [f"{name} (via FAISS)" for name, _ in faiss_results]
 
     best_clip_match, similarity = match_with_clip(image)
     if similarity > 0.65:
