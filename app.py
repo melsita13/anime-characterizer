@@ -2,10 +2,10 @@ import streamlit as st
 from PIL import Image
 from datetime import datetime
 import os
-from data_fetch.recognizer import recognize_characters
-from data_fetch.fetch_bio import fetch_character_info
+from recognizer import recognize_characters
+from fetch_bio import fetch_character_info
 from streaming.streaming_info import get_streaming_links
-from data_fetch.character_gallery import get_character_images
+from character_gallery import get_character_images
 from detector.yolo_detector import detect_characters
 import re
 

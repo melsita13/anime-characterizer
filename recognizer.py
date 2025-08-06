@@ -1,7 +1,7 @@
 import deepdanbooru as dd
 from PIL import Image
 import numpy as np
-from data_fetch.fallback_matcher import match_with_clip
+from fallback_matcher import match_with_clip
 
 Model_Path = "./models/deepdanbooru_model"
 

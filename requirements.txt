@@ -10,4 +10,3 @@ deepdanbooru
 torch
 open_clip
 ultralytics
-
