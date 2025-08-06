@@ -1,16 +1,15 @@
 import requests
 import urllib.parse
+from utils.name_cleaner import clean_character_names
 
 def get_character_images(character_name):
-    # Avoid fallback names or unknown results
     if "Related Character" in character_name or "Top Tags" in character_name or "Unknown" in character_name:
         return {
             "error": "Name too generic for Anilist.",
             "google_search": get_google_image_search(character_name)
         }
 
-    # Strip anything after '(' e.g., "Rem (Re:Zero)" → "Rem"
-    character_name = character_name.split("(")[0].strip()
+    character_name = clean_character_names(character_name)
 
     print(f"[DEBUG] Searching for character: {character_name}")
 
