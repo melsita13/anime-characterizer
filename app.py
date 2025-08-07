@@ -40,7 +40,6 @@ if uploaded_file:
 
             with col2:
                 character_names = recognize_characters(face, top_k=3)
-                # Apply the cleaning function to each name in the list
                 character_names = [
                     clean_character_name(name) for name in character_names
                 ]
@@ -52,91 +51,92 @@ if uploaded_file:
                 else:
                     st.warning("No recognizable characters detected.")
 
-                # Restore the user's ability to select a character or enter a name
-                if character_names:
-                    selected_character = st.selectbox(
-                        "📌 Proceed with character:", character_names, key=f"select_{i}"
-                    )
-                else:
-                    selected_character = st.text_input(
-                        "📌 Enter character manually:", key=f"manual_{i}"
-                    )
+            # Moved the selection and button here, after the columns
+            if character_names:
+                selected_character = st.selectbox(
+                    "📌 Proceed with character:", character_names, key=f"select_{i}"
+                )
+            else:
+                selected_character = st.text_input(
+                    "📌 Enter character manually:", key=f"manual_{i}"
+                )
+            
+            st.markdown("---")
 
-                if st.button("Get Character Info", key=f"info_{i}"):
-                    # Check if a character name is available before making API calls
-                    if not selected_character:
-                        st.warning("Please select or enter a character name.")
-                        st.stop()
+            if st.button("Get Character Info", key=f"info_{i}"):
+                if not selected_character:
+                    st.warning("Please select or enter a character name.")
+                    st.stop()
 
-                    with st.spinner("🔎 Fetching character details..."):
-                        result = fetch_character_info(selected_character)
+                with st.spinner("🔎 Fetching character details..."):
+                    result = fetch_character_info(selected_character)
 
-                        if "error" in result:
-                            st.error(f"{result['error']}")
-                        else:
-                            st.image(result["image_url"], width=180)
-                            st.markdown(f"{result['name']}")
+                    if "error" in result:
+                        st.error(f"{result['error']}")
+                    else:
+                        st.image(result["image_url"], width=180)
+                        st.markdown(f"{result['name']}")
 
-                            with st.expander("About"):
-                                st.markdown(result["about"] or "_No bio available._")
+                        with st.expander("About"):
+                            st.markdown(result["about"] or "_No bio available._")
 
-                            with st.expander("Anime Appearances"):
-                                anime_titles = result["anime"] or ["No known anime."]
-                                st.markdown(
-                                    "• " + "<br>• ".join(anime_titles),
-                                    unsafe_allow_html=True,
-                                )
-
-                            st.markdown("Character Gallery")
-                            gallery = get_character_images(selected_character)
-                            if "error" in gallery:
-                                st.info("No additional images available.")
-                                if "Google Search" in gallery:
-                                    st.markdown(
-                                        f"[Search on Google Images]({gallery['Google Search']})"
-                                    )
-                            else:
-                                num_images = len(gallery["images"])
-                                cols = st.columns(min(num_images, 5))
-                                for j, img_url in enumerate(gallery["images"]):
-                                    with cols[j % len(cols)]:
-                                        st.markdown(
-                                            f"""
-                                            <div style='width: 130px; height: 180px; overflow: hidden; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px;'>
-                                                <img src="{img_url}" style='width: 100%; height: 100%; object-fit: cover;' />
-                                            </div>
-                                            """,
-                                            unsafe_allow_html=True,
-                                        )
-
-                            st.markdown("Where to Watch")
-                            anime_title = (
-                                anime_titles[0]
-                                if anime_titles and anime_titles[0] != "No known anime."
-                                else selected_character
+                        with st.expander("Anime Appearances"):
+                            anime_titles = result["anime"] or ["No known anime."]
+                            st.markdown(
+                                "• " + "<br>• ".join(anime_titles),
+                                unsafe_allow_html=True,
                             )
-                            streaming = get_streaming_links(anime_title)
 
-                            if "error" in streaming:
-                                st.info("Streaming info not available.")
-                            else:
-                                for site, url in streaming["links"].items():
+                        st.markdown("Character Gallery")
+                        gallery = get_character_images(selected_character)
+                        if "error" in gallery:
+                            st.info("No additional images available.")
+                            if "Google Search" in gallery:
+                                st.markdown(
+                                    f"[Search on Google Images]({gallery['Google Search']})"
+                                )
+                        else:
+                            num_images = len(gallery["images"])
+                            cols = st.columns(min(num_images, 5))
+                            for j, img_url in enumerate(gallery["images"]):
+                                with cols[j % len(cols)]:
                                     st.markdown(
                                         f"""
-                                        <a href="{url}" target="_blank" style="
-                                            display: inline-block;
-                                            color: #1E90FF;
-                                            text-decoration: none;
-                                            font-weight: 500;
-                                            margin: 4px 0;
-                                        ">
-                                            🌐 {site}
-                                        </a>
+                                        <div style='width: 130px; gap-2 height: 180px; overflow: hidden; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px;'>
+                                            <img src="{img_url}" style='width: 100%; height: 100%; object-fit: cover;' />
+                                        </div>
                                         """,
                                         unsafe_allow_html=True,
                                     )
 
-                            st.success("Done! All character info loaded.")
+                        st.markdown("Where to Watch")
+                        anime_title = (
+                            anime_titles[0]
+                            if anime_titles and anime_titles[0] != "No known anime."
+                            else selected_character
+                        )
+                        streaming = get_streaming_links(anime_title)
+
+                        if "error" in streaming:
+                            st.info("Streaming info not available.")
+                        else:
+                            for site, url in streaming["links"].items():
+                                st.markdown(
+                                    f"""
+                                    <a href="{url}" target="_blank" style="
+                                        display: inline-block;
+                                        color: #1E90FF;
+                                        text-decoration: none;
+                                        font-weight: 500;
+                                        margin: 4px 0;
+                                    ">
+                                        🌐 {site}
+                                    </a>
+                                    """,
+                                    unsafe_allow_html=True,
+                                )
+
+                        st.success("Done! All character info loaded.")
 else:
     st.info("Upload an anime image to get started!")
 
