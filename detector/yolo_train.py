@@ -1,7 +1,6 @@
-import os
 from ultralytics import YOLO
 
-DATA_YAML_PATH = "../character_db/character_embeddings.pkl"
+DATA_YAML_PATH = "../yolo_data.yaml"
 MODEL_PATH = "../yolov8n.pt"
 OUTPUT_DIR = "yolo_finetuned"
 

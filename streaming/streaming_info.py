@@ -20,7 +20,7 @@ def get_streaming_links(anime_title):
     variables = {"search": anime_title}
 
     data = make_api_request(
-        ANILIST_URL, method="POST", json={"query": query, "variables": variables}
+        ANILIST_URL, method="post", json_data={"query": query, "variables": variables}
     )
 
     if "error" in data or "data" not in data or not data["data"]["Media"]:

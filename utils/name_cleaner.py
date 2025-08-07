@@ -1,16 +1,13 @@
 import re
 
-def clean_character_names(character_names):
+def clean_character_name(name: str) -> str:
     """
-    Cleans a list of character names by removing any text within parentheses and stripping whitespace.
+    Cleans up a character name by removing parenthetical information and stripping whitespace.
+    Example: "Rem (Re:Zero)" -> "Rem"
+    """
+    if not isinstance(name, str):
+        print(f"[DEBUG] Input to name cleaner is not a string: {name}")
+        return "" # Return an empty string to avoid errors
     
-    Args:
-        character_names (list): List of character names as strings.
-        
-    Returns:
-        list: Cleaned list of character names.
-    """
-    return [
-        re.sub(r"\s*\(.*?\)", "", name).strip()
-        for name in character_names
-    ]
+    # Remove text in parentheses and any leading/trailing whitespace
+    return re.sub(r"\\s*\\(.*?\\)", "", name).strip()

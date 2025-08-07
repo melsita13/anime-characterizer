@@ -5,7 +5,7 @@ ANILIST_URL = "https://graphql.anilist.co"
 JIKAN_URL = "https://api.jikan.moe/v4"
 
 
-def make_api_request(url, method="GET", json_data=None, params=None):
+def make_api_request(url, method="get", json_data=None, params=None):
     """
     Makes an API request to the given URL with the specified method and parameters.
     Returns the JSON response if successful, or None if an error occurs.
@@ -16,9 +16,9 @@ def make_api_request(url, method="GET", json_data=None, params=None):
     :return: JSON response if successful, or None if an error occurs.
     """
     try:
-        if method == "GET":
+        if method == "get":
             response = requests.get(url, params=params)
-        elif method == "POST":
+        elif method == "post":
             response = requests.post(url, json=json_data)
         else:
             raise ValueError("Unsupported HTTP method")

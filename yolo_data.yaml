@@ -1,0 +1,12 @@
+# Path to the custom dataset (relative to the project root)
+path: ../yolo_data
+
+# Path to the training images (relative to the path above)
+train: images/train
+
+# Path to the validation images (relative to the path above)
+val: images/val
+
+# Class names for the objects you are detecting
+names:
+  0: character_face

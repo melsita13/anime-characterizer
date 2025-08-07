@@ -7,7 +7,7 @@ from fetch_bio import fetch_character_info
 from streaming.streaming_info import get_streaming_links
 from character_gallery import get_character_images
 from detector.yolo_detector import detect_characters
-from utils.name_cleaner import clean_character_names
+from utils.name_cleaner import clean_character_name 
 
 os.makedirs("training_data", exist_ok=True)
 st.set_page_config(
@@ -40,26 +40,35 @@ if uploaded_file:
 
             with col2:
                 character_names = recognize_characters(face, top_k=3)
-                character_names = clean_character_names(character_names)
+                # Apply the cleaning function to each name in the list
+                character_names = [
+                    clean_character_name(name) for name in character_names
+                ]
 
-                st.markdown("#### 🔍 Recognized Characters")
+                st.markdown("Recognized Characters")
                 if character_names:
                     for name in character_names:
                         st.success(f"`{name}`")
                 else:
                     st.warning("No recognizable characters detected.")
 
+                # Restore the user's ability to select a character or enter a name
                 if character_names:
                     selected_character = st.selectbox(
-                        "Proceed with character:", character_names, key=f"select_{i}"
+                        "📌 Proceed with character:", character_names, key=f"select_{i}"
                     )
                 else:
                     selected_character = st.text_input(
-                        "Enter character manually:", key=f"manual_{i}"
+                        "📌 Enter character manually:", key=f"manual_{i}"
                     )
 
                 if st.button("Get Character Info", key=f"info_{i}"):
-                    with st.spinner("Fetching character details..."):
+                    # Check if a character name is available before making API calls
+                    if not selected_character:
+                        st.warning("Please select or enter a character name.")
+                        st.stop()
+
+                    with st.spinner("🔎 Fetching character details..."):
                         result = fetch_character_info(selected_character)
 
                         if "error" in result:
@@ -82,9 +91,9 @@ if uploaded_file:
                             gallery = get_character_images(selected_character)
                             if "error" in gallery:
                                 st.info("No additional images available.")
-                                if "google_search" in gallery:
+                                if "Google Search" in gallery:
                                     st.markdown(
-                                        f"[Search on Google Images]({gallery['google_search']})"
+                                        f"[Search on Google Images]({gallery['Google Search']})"
                                     )
                             else:
                                 num_images = len(gallery["images"])
