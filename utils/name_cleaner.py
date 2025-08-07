@@ -7,7 +7,6 @@ def clean_character_name(name: str) -> str:
     """
     if not isinstance(name, str):
         print(f"[DEBUG] Input to name cleaner is not a string: {name}")
-        return "" # Return an empty string to avoid errors
-    
-    # Remove text in parentheses and any leading/trailing whitespace
-    return re.sub(r"\\s*\\(.*?\\)", "", name).strip()
+        return ""
+
+    return re.sub(r"\s*\(.*?\)", "", name).strip()
