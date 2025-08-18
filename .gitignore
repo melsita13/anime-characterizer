@@ -18,6 +18,11 @@ models/deepdanbooru_model/
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
+# anime_characters
+anime_characters/
+*.jpg
+*.png
+
 # Test images or temp files
 test_images/
 *.jpg
