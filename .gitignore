@@ -28,6 +28,12 @@ test_images/
 *.jpg
 *.png
 
+test_images/anime_chars/
+*.jpeg
+*.jpg
+*.png
+
+
 # character_db
 character_db/
 *.jpg
