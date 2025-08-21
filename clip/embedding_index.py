@@ -1,53 +1,76 @@
 import os
-import csv
-import json
-import faiss
 import torch
+import pickle
 from PIL import Image
-from clip_embedder import get_image_embedding
+import open_clip
 
-# paths
-DATA_DIR = "./training_data"
-LABELS_FILE = "./training_data/labels.csv"
-INDEX_FILE = "./character_db/character_index.faiss"
-LABEL_MAP_FILE = "./character_db/index_to_label.json"
+# 🔧 Disable Hugging Face symlink warnings on Windows
+os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+
+# ⚙️ Device setup
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+# ✅ Load CLIP model once
+model, _, preprocess = open_clip.create_model_and_transforms(
+    'ViT-B-32', pretrained='laion2b_s34b_b79k'
+)
+model.to(device)
+model.eval()
+
+def get_image_embedding(image: Image.Image) -> torch.Tensor:
+    """Extract CLIP embedding from a PIL image."""
+    image_input = preprocess(image).unsqueeze(0).to(device)
+
+    with torch.no_grad():
+        image_features = model.encode_image(image_input)
+        image_features = image_features / image_features.norm(dim=-1, keepdim=True)
+
+    return image_features.cpu()
+
+# =======================
+# 🔄 EMBEDDING DB BUILDER
+# =======================
+
+DB_FOLDER = './test_images/anime_chars'
+EMBEDDING_FILE = './character_db/character_embeddings.pkl'
+
+def build_db():
+    """Embed images and store them as {name: embedding} into a .pkl file"""
+    
+    # 🧠 Load existing embeddings if any
+    if os.path.exists(EMBEDDING_FILE):
+        with open(EMBEDDING_FILE, 'rb') as f:
+            database = pickle.load(f)
+        print(f"🗃️ Loaded existing database with {len(database)} entries.")
+    else:
+        database = {}
+        print("📦 Starting a new character database.")
+
+    # 🔍 Process each image in folder
+    for filename in os.listdir(DB_FOLDER):
+        if filename.lower().endswith(('.jpg', '.jpeg', '.png')):
+            char_name = os.path.splitext(filename)[0].lower()
+
+            # Skip already existing entries
+            if char_name in database:
+                print(f"⏭️ Skipping {char_name} (already exists)")
+                continue
+
+            image_path = os.path.join(DB_FOLDER, filename)
+            print(f"🔄 Processing: {char_name}")
+            try:
+                image = Image.open(image_path).convert("RGB")
+                embedding = get_image_embedding(image)
+                database[char_name] = embedding
+            except Exception as e:
+                print(f"❌ Error processing {char_name}: {e}")
+
+    # 💾 Save updated database
+    with open(EMBEDDING_FILE, 'wb') as f:
+        pickle.dump(database, f)
+
+    print(f"✅ Saved {len(database)} character embeddings to {EMBEDDING_FILE}")
 
 
-images = []
-labels = []
-
-with open(LABELS_FILE, "r") as f:
-    reader = csv.reader(f)
-    for row in reader:
-        label, filename = row
-        path = os.path.join(DATA_DIR, filename)
-        if os.path.exists(path):
-            images.append(path)
-            labels.append(label)
-
-# Embed all images
-embeddings = []
-for path in images:
-    try:
-        img = Image.open(path).convert("RGB")
-        emb = get_image_embedding(img)
-        embeddings.append(emb)
-    except Exception as e:
-        print(f"Skipping {path} due to error: {e}")
-
-# Stack all embeddings
-embeddings = torch.cat(embeddings, dim=0).numpy().astype("float32")
-
-# Build FAISS index
-dim = embeddings.shape[1]
-index = faiss.IndexFlatL2(dim)
-index.add(embeddings)
-
-# Save index and label mapping
-faiss.write_index(index, INDEX_FILE)
-
-index_to_label = {i: labels[i] for i in range(len(labels))}
-with open(LABEL_MAP_FILE, "w") as f:
-    json.dump(index_to_label, f)
-
-print(f"Saved index with {len(labels)} entries.")
+if __name__ == "__main__":
+    build_db()
